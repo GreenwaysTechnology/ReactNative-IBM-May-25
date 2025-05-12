@@ -1,0 +1,16 @@
+JavaScript - ES 6 Fundamentals
+React - User interface -  web, Mobile(react native)
+Redux -User interface -statement management lib.
+React native
+.............................................................................................
+Lab Setup:
+
+1.node.js latest version
+2.vs code 				
+
+React native lab :
+ we will see later.
+
+
+
+
