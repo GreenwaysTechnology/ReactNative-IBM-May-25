@@ -607,11 +607,11 @@ console.log(`id ${emp.salary}`)
 console.log(`totalSalary ${emp.calculateSalary()}`)
 
 ..................................................................................
-			State initalization
+			State initialization
 ...................................................................................
 
 1.inside class directly
-2.inside class inside construcotr
+2.inside class inside constructor
 3.outside class using reference variable
 
 1.inside class directly
@@ -836,7 +836,7 @@ function printEmployee({ id, name, address: { city } }) {
 printEmployee({ id: 1, name: 'Subramanian', address: { city: 'Coimbatore' } })
 
 ..................................................................................
-			Return object and destructuring
+			Return object and Destructuring
 ..................................................................................
 // function getStock() {
 //     return {
@@ -886,3 +886,208 @@ const getStock = (id = 0, symbol = 'Foo', qty = 0, price = 0) => ({
 
 console.log(getStock(1, 'google', 100, 1000))
 console.log(getStock())
+..........................................................................................................................................................................................
+							 .....................................................................................
+			 Async programming
+.....................................................................................
+
+Async programming which does not block current thread ,work is done in Kernal parts.
+Results are returned from the Kernal using event driven arch.
+
+How to implement async programming?
+
+Req:
+1.High level non blocking apis provided by js language.
+        -timers,ajax,web socket....
+2.Listener function to  handle async results which is called as callbacks.
+3.Callbacks are implemented using Higher order Function(function as parameter)
+
+
+Styles of writing async programming:
+
+1.callbacks pattern
+2.Promise Pattern
+3.Promise with async and await
+4.Reactive Programming via rxjs...
+
+
+function blockMe(message) {
+    console.log(message)
+}
+function sayHello(callback) {
+    setTimeout(callback, 5000)
+}
+function main() {
+    blockMe('start')
+    sayHello(function () {
+        console.log('hello')
+    })
+    blockMe('end')
+}
+main()
+
+Arrow Version:
+function blockMe(message) {
+    console.log(message)
+}
+function sayHello(callback) {
+    setTimeout(callback, 5000)
+}
+function main() {
+    blockMe('start')
+    sayHello(() => {
+        console.log('hello')
+    })
+    blockMe('end')
+}
+main()
+
+..................
+
+Callback with data:
+function blockMe(message) {
+    console.log(message)
+}
+function sayHello(abc) {
+    setTimeout(abc, 5000,'Hello')
+}
+function main() {
+    blockMe('start')
+    sayHello((message) => {
+        console.log(message)
+    })
+    blockMe('end')
+}
+main()
+.......................
+
+callback with realtime example.
+
+
+//resolve=success,reject=failure
+const login = (userName, password, resolve, reject) => {
+    if (userName === 'admin' && password === 'admin') {
+        setTimeout(resolve, 1000, 'login success')
+    } else {
+        setTimeout(reject, 1000, 'login is failed')
+    }
+}
+function main() {
+    login('admin', 'admin', (status) => {
+        console.log(status)
+    }, (err) => {
+        console.log(err)
+    })
+
+    login('xx', 'yy', (status) => {
+        console.log(status)
+    }, (err) => {
+        console.log(err)
+    })
+
+}
+main()
+...................................................................................
+				callback chaining
+..................................................................................
+
+The output one callback will input for another callback.
+
+in sequential  code
+
+const res1 = api1()
+const res2 =api2(res1)
+
+in Async code ? callback chaining.
+
+const getUser = (resolve, reject) => {
+    console.log('getUser is called')
+    let user = { name: 'admin' }
+    //    user = null
+    if (user) {
+        setTimeout(resolve, 1000, user)
+    } else {
+        setTimeout(reject, 1000, 'User not found')
+    }
+}
+const login = (user, resolve, reject) => {
+    console.log('login is called')
+    if (user.name === 'admin') {
+        setTimeout(resolve, 1000, 'login is success')
+    } else {
+        setTimeout(reject, 1000, 'login is failed')
+    }
+}
+const showdashbaord = (status, resolve, reject) => {
+    console.log('showdashbaord is called')
+    if (status === 'login is success') {
+        setTimeout(resolve, 1000, 'welcome to dashboard')
+    } else {
+        setTimeout(reject, 1000, 'welcome to guest')
+    }
+}
+
+function main() {
+    getUser(user => {
+        login(user, status => {
+            showdashbaord(status, adminPage => {
+                console.log(adminPage)
+            }, errPage => {
+                console.log(errPage)
+            })
+        }, err => {
+            console.log(err)
+        })
+    }, err => {
+        console.log(err)
+    })
+}
+main()
+
+Callback Hell:
+..............
+getUser(user => {
+    login(user, status => {
+        console.log(status)
+    }, err => {
+        console.log(err)
+    })
+}, err => {
+    console.log(err)
+})
+
+
+fs.readdir(source, function (err, files) {
+  if (err) {
+    console.log('Error finding files: ' + err)
+  } else {
+    files.forEach(function (filename, fileIndex) {
+      console.log(filename)
+      gm(source + filename).size(function (err, values) {
+        if (err) {
+          console.log('Error identifying file size: ' + err)
+        } else {
+          console.log(filename + ' : ' + values)
+          aspect = (values.width / values.height)
+          widths.forEach(function (width, widthIndex) {
+            height = Math.round(width / aspect)
+            console.log('resizing ' + filename + 'to ' + height + 'x' + height)
+            this.resize(width, height).write(dest + 'w' + width + '_' + filename, function(err) {
+              if (err) console.log('Error writing file: ' + err)
+            })
+          }.bind(this))
+        }
+      })
+    })
+  }
+
+In the above code:
+
+Are you able to understand code?
+Are you able to debug code easily?
+Are you able to scale code?
+
+No!
+ This is called "Callback Hell".
+
+How to avoid callback hell or how to write clean async code? how to write simple async programming without callback hell?
