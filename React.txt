@@ -666,6 +666,136 @@ const Welcome = () => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(<Welcome />)
+.......................................................................................................
+			Component Composition
+
+import { createRoot } from "react-dom/client"
+
+
+const Hello = () => <h1>Hello,How are you</h1>
+
+const Welcome = () => {
+    return <>
+        <Hello />
+    </>
+}
+const Greeter = () => {
+    return <>
+        <Hello />
+    </>
+}
+//Application comonent, which injects other components
+const App = () => {
+    return <>
+        <Welcome />
+        <Greeter />
+    </>
+}
+
+
+createRoot(document.getElementById('root')).render(<App />)
+
+.....................................................................................
+		  Component Composition and Modularity
+.....................................................................................
+Every Component will go into separate folders and files, through es 6 modules you can import export components..
+
+https://legacy.reactjs.org/docs/faq-structure.html
+
+Is there a recommended way to structure React projects?
+
+React doesn’t have opinions on how you put files into folders. That said there are a few common approaches popular in the ecosystem you may want to consider.
+
+
+Grouping by features or routes
+
+common/
+  Avatar.js
+  Avatar.css
+  APIUtils.js
+  APIUtils.test.js
+feed/
+  index.js
+  Feed.js
+  Feed.css
+  FeedStory.js
+  FeedStory.test.js
+  FeedAPI.js
+profile/
+  index.js
+  Profile.js
+  ProfileHeader.js
+  ProfileHeader.css
+  ProfileAPI.js
+
+Grouping by file type
+api/
+  APIUtils.js
+  APIUtils.test.js
+  ProfileAPI.js
+  UserAPI.js
+components/
+  Avatar.js
+  Avatar.css
+  Feed.js
+  Feed.css
+  FeedStory.js
+  FeedStory.test.js
+  Profile.js
+  ProfileHeader.js
+  ProfileHeader.css
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(<Heading></Heading>)
+
+Component File Naming Convention:
+
+FileName Must start with Capital letter.
+Feed.jsx
+
+eg:
+
+src/welcome/Welcome.jsx
+
+
+export const Welcome = () => {
+    return <h1>Hello , How are you</h1>
+}
+src/App.jsx
+import { Welcome } from "./greeter/Welcome"
+
+function App() {
+  return <Welcome />
+}
+export default App
+
+src/main.js
+import { createRoot } from "react-dom/client"
+import App from './App'
+
+
+createRoot(document.getElementById('root')).render(<App />)
+
+Task:
+
+ Build layout with component composition 
+
+<Page>
+   <Header>
+      <Logo/>
+   </Header>
+    <Main>
+		   <Section/>
+    </Main>	
+   <Footer>
+      copyRight
+   </Footer>
+</Page>
+
+<App>
+  <Page>
+</App>
 
 
 
