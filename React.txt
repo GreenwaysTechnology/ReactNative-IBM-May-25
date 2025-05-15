@@ -1230,6 +1230,412 @@ function App() {
     </>
 }
 export default App;
+..........................................................................................................................................................
+						Styling
+..........................................................................................................................................................
+
+web apps which are running inside browser, is based "CSS" styling language.
+
+There are two ways to apply css to react components
+
+1.external styles
+2.inline style
+
+external styles are applied via style sheet.
+
+app.css, index.css
+
+style selectors
+
+inside code
+
+import './App.css'
+
+<div className="background">
+
+</div>
+
+inline Style:
+  css styles are applied via javascript object style object
+
+<div style={StyleObject} </div>
+
+
+import { createRoot } from 'react-dom/client'
+import { PRODUCTS } from './mock-data/products'
+import './index.css'
+
+
+const style = {
+    label: { backgroundColor: 'GrayText', color: 'HighlightText' }
+}
+
+const ProductDetails = props => {
+    return <section className="cards">
+        <h1>{props.product.id}</h1>
+        <h2>{props.product.title}</h2>
+        <img src={props.product.image} height={300} width={300} />
+        {/* <p style={{backgroundColor:'GrayText',color:'HighlightText'}} >{props.product.description}</p> */}
+        <p style={style.label}>{props.product.description}</p>
+        <h3>Price: {props.product.price} Category : {props.product.category} Rating: {props.product.rating.rate}</h3>
+    </section>
+}
+
+const ProductList = ({ data }) => {
+    // return <div>
+    //     {
+    //         data.map(product => {
+    //             return <ProductDetails product={product} />
+    //         })
+    //     }
+    // </div>
+    return <div>
+        {
+            data.map(product => <ProductDetails key={product.id} product={product} />)
+        }
+    </div>
+
+}
+
+const App = () => {
+
+    return <>
+        <ProductList data={PRODUCTS} />
+    </>
+}
+
+createRoot(document.getElementById('root')).render(
+    <App />
+)
+
+
+index.css
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 100px;
+  padding: 10px;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.cards {
+  max-width: 700px;
+  margin: 1em auto;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-gap: 20px;
+}
+
+.card {
+  border: 1px solid #999;
+  border-radius: 3px;
+
+  display: grid;
+  grid-template-rows: max-content 200px 1fr;
+}
+
+.card img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.card h2 {
+  margin: 0;
+  padding: 0.5rem;
+}
+
+.card .content {
+  padding: 0.5rem;
+}
+
+.card footer {
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
+.................................................................................
+				conditional rendering
+.................................................................................
+
+How to display UI based on condition? How we can use if..else or tenary operator?
+
+In React, you can conditionally render jsx using javascript syntax like if statement ,&& and ?: operator..
+
+
+Using If..else:
+
+import { TODOS } from "./mock-data/todos"
+
+const Item = props => {
+  const { name, status } = props.todo
+  if (status) {
+    return <li>{name} ✔</li>
+  } else {
+    return <li>{name}</li>
+  }
+}
+const TodoList = props => {
+  return <>
+    <ul>
+      {
+        props.todos.map(todo => {
+          return <>
+            <Item todo={todo} />
+          </>
+        })
+      }
+    </ul>
+  </>
+}
+
+
+function App() {
+  return <TodoList todos={TODOS} />
+}
+export default App
+
+import { TODOS } from "./mock-data/todos"
+
+//using traditionl if..else
+// const Item = props => {
+//   const { name, status } = props.todo
+//   if (status) {
+//     return <li>{name} ✔</li>
+//   } else {
+//     return <li>{name}</li>
+//   }
+// }
+
+// const Item = props => {
+//   const { name, status } = props.todo
+//   return <li>
+//     {status ? `${name} ✔` : name}
+//   </li>
+// }
+
+// const Item = ({ todo: { name, status } }) => {
+//   // const { name, status } = props.todo
+//   // console.log(props)
+//   return <li>
+//     {status ? `${name} ✔` : name}
+//   </li>
+
+// }
+const CompletedItem = ({ name }) => <span>{name} ✔</span>
+
+const Item = ({ todo: { name, status } }) => {
+  // const { name, status } = props.todo
+  // console.log(props)
+  return <li>
+    {status ? <CompletedItem name={name} /> : name}
+  </li>
+
+}
+
+const TodoList = props => {
+  return <>
+    <ul>
+      {
+        props.todos.map(todo => {
+          return <>
+            <Item todo={todo} />
+          </>
+        })
+      }
+    </ul>
+  </>
+}
+
+
+function App() {
+  return <TodoList todos={TODOS} />
+}
+export default App;
+...........................................................................................................................................................
+.................................................................................
+			   State Pattern
+			  (Event Handling)
+................................................................................
+
+What is state?
+  State is another way of representing data in React.
+
+As of we have seen data is not changing or updating...
+
+How to introduce State?
+
+There are two ways
+
+1.class pattern 
+   It is legacy way of representing state and Managining state
+   It is not recommended..
+
+2.Function pattern
+    It is modern way of representing state
+    State is represented via "Hooks".
+
+
+
+Class Pattern:
+
+Use case: 1.Declare Component
+
+import React  from "react";
+
+class Review extends React.Component {
+
+  render() {
+    return <div>
+      <h1>Review App</h1>
+    </div>
+  }
+}
+
+function App() {
+    return <>
+      <Review/>
+    </>
+}
+export default App;
+
+Use case: How to declare state.
+
+import React from "react";
+
+
+class Review extends React.Component {
+
+    //declare state
+    state = {
+        //your state
+        like: 0
+    }
+
+    render() {
+        console.log(this.state)
+        return <div>
+            <h1>Review App</h1>
+            <h2>Like : {this.state.like}</h2>
+        </div>
+    }
+}
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+..............................................................................
+				 Introducing Event Handling
+...............................................................................
+
+Use Case : Introducing listeners
+import React from "react";
+
+
+class Review extends React.Component {
+
+    //declare state
+    state = {
+        //your state
+        like: 0
+    }
+    //listener 
+    onLike = () => {
+        console.log('Onlike is called')
+    }
+    render() {
+        console.log(this.state)
+        return <div>
+            <h1>Review App</h1>
+            <h2>Like : {this.state.like}</h2>
+            <button onClick={this.onLike}>Like</button>
+        </div>
+    }
+}
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+
+
+
+
+
+
 
 
 
