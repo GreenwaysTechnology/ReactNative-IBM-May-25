@@ -2,28 +2,50 @@ import { createRoot } from 'react-dom/client'
 import React from 'react'
 import './index.css'
 
-class Review extends React.Component {
+class Customer extends React.Component {
+
     state = {
-        like: 0
+        customer: {
+            id: 1,
+            name: 'Subramanian',
+            contact: {
+                address: {
+                    city: 'Chennai'
+                },
+                communcation: {
+                    mobileNo: '9000000'
+                }
+            }
+        }
     }
-    //listener: Arrow Function
-    onLike = () => {
-        this.state.like += 1
-        console.log(this.state)
-
+    onUpdate = () => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                customer: {
+                    ...prevState.customer,
+                    contact: {
+                        ...prevState.customer.contact,
+                        communcation: {
+                            ...prevState.customer.contact.communcation,
+                            mobileNo: '9734232323'
+                        }
+                    }
+                }
+            }
+        })
     }
-
     render() {
-        // console.log(this.state)
         return <div>
-            <h1>Review App</h1>
-            <h2>Like : {this.state.like}</h2>
-            <button onClick={this.onLike}>Like</button>
+            <h1>Customer info</h1>
+            <h2>Name : {this.state.customer.name}</h2>
+            <h2>Phone : {this.state.customer.contact.communcation.mobileNo}</h2>
+            <button onClick={this.onUpdate}>UpdateMobileNo</button>
         </div>
     }
 }
 
-const App = () => <Review />
+const App = () => <Customer />
 
 
 createRoot(document.getElementById('root')).render(<App />)

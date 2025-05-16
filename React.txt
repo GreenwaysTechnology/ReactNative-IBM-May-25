@@ -1864,7 +1864,371 @@ let todos = [{
 Object.freeze(todos)
 
 console.log(add(todos, { title: 'Learn Microservices', done: false }));
+....................................................................................
+			 React state mutation and pure functions
+.....................................................................................
 
+this.setState()
+  pure function which returns immutable object always..
+
+syntax:
+ this.setState(function(state,props){
+     //return immutable object
+    return {} / object.assign / spread notation
+ })
+.....................................................................................
+
+State Tracking:
+
+ Previous State and Current State...
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+
+
+class Review extends React.Component {
+
+    //state declaration
+    state = {
+        //application data/ui data
+        like: 10
+    }
+    //listener: arrow function
+    onLike = () => {
+        //react offers the pure function through which only we have to update u
+        // this.setState(function (previousState) {
+        //     // return {
+        //     //     like: previousState.like + 1
+        //     // }
+        //     // return Object.assign({}, previousState, { like: previousState.like + 1 })
+        //     return { ...previousState, like: previousState.like + 1 }
+        // })
+        // this.setState(previousState => ({ ...previousState, like: previousState.like + 1 }))
+
+        this.setState(function (previousState) {
+            console.log('Previous State ',previousState)
+            return { ...previousState, like: previousState.like + 1 }
+        })
+    }
+    render() {
+        console.log('current state', this.state)
+        return <div>
+            <h1>Review Component</h1>
+            <h5>Like {this.state.like}</h5>
+            <button onClick={this.onLike}>😁</button>
+        </div>
+    }
+}
+
+
+const App = () => {
+    return <>
+        <Review></Review>
+    </>
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />
+);
+.................................................................................
+		Multi State variable
+.................................................................................
+import React from "react";
+
+
+class Review extends React.Component {
+
+    state = {
+        like: 0,
+        dislike: 0
+    }
+    //listener 
+    onLike = () => {
+        this.setState(prevState => {
+            return { ...prevState, like: prevState.like + 1 }
+        })
+    }
+    onDislike = () => {
+        this.setState(prevState => {
+            return { ...prevState, dislike: prevState.dislike + 1 }
+        })
+    }
+    render() {
+        return <div>
+            <h1>Review App</h1>
+            <h2>Like : {this.state.like}  Dislike : {this.state.dislike}</h2>
+            <button onClick={this.onLike}>Like</button>
+            <button onClick={this.onDislike}>Dislike</button>
+
+        </div>
+    }
+}
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+................................................................................
+								InLine Listeners
+...............................................................................
+import React from "react";
+
+
+class Review extends React.Component {
+    state = {
+        like: 0,
+        dislike: 0
+    }
+    render() {
+        return <div>
+            <h1>Review App</h1>
+            <h2>Like : {this.state.like}  Dislike : {this.state.dislike}</h2>
+            <button onClick={() => {
+                this.setState(prevState => {
+                    return { ...prevState, like: prevState.like + 1 }
+                })
+            }}>Like</button>
+            <button onClick={() => {
+                this.setState(prevState => {
+                    return { ...prevState, dislike: prevState.dislike + 1 }
+                })
+            }}>Dislike</button>
+
+        </div>
+    }
+}
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+.................................................................................
+	Component Composition: state as prop, listener as prop
+	   	     (Dynamic Prop)
+..............................................................................
+import React from "react";
+
+
+class Review extends React.Component {
+    state = {
+        like: 0,
+        dislike: 0
+    }
+    onLike = () => {
+        this.setState(prevState => {
+            return { ...prevState, like: prevState.like + 1 }
+        })
+    }
+    onDislike = () => {
+        this.setState(prevState => {
+            return { ...prevState, dislike: prevState.dislike + 1 }
+        })
+    }
+    render() {
+        return <ReviewDashboard {...this.state} onLike={this.onLike} onDislike={this.onDislike} />
+    }
+}
+const ReviewDashboard = props => {
+    return <div>
+        <h1>Review App</h1>
+        <h2>Like : {props.like}  Dislike : {props.dislike}</h2>
+        <button onClick={props.onLike}>Like</button>
+        <button onClick={props.onDislike}>Dislike</button>
+    </div>
+}
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+
+.......................................................................................................
+                            setState and Object Destructuring
+.....................................................................................................
+								
+import React from "react";
+
+
+class Review extends React.Component {
+    state = {
+        like: 0,
+        dislike: 0
+    }
+    onLike = () => {
+        // this.setState(prevState => {
+        //     return { ...prevState, like: prevState.like + 1 }
+        // })
+        // this.setState(prevState => ({ ...prevState, like: prevState.like + 1 }))
+
+        this.setState(({ ...this.state, like: this.state.like + 1 }))
+
+    }
+    onDislike = () => {
+        // this.setState(prevState => ({ ...prevState, dislike: prevState.dislike + 1 }))
+        this.setState(({ ...this.state, dislike: this.state.dislike + 1 }))
+
+    }
+    render() {
+        return <ReviewDashboard {...this.state} onLike={this.onLike} onDislike={this.onDislike} />
+    }
+}
+const ReviewDashboard = props => {
+    return <div>
+        <h1>Review App</h1>
+        <h2>Like : {props.like}  Dislike : {props.dislike}</h2>
+        <button onClick={props.onLike}>Like</button>
+        <button onClick={props.onDislike}>Dislike</button>
+    </div>
+}
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+
+.....................................................................................................
+					Nested State
+....................................................................................................
+
+simple state:
+
+state = {
+   like:0
+}
+
+
+State with in state:
+...................
+state= {
+   house:{
+     name:'RavenClaw',
+     points:10
+   }
+}
+import React from "react";
+
+
+class Review extends React.Component {
+    state = {
+        house: {
+            name: 'RavenClaw',
+            points: 10
+        },
+
+    }
+
+    onLike = () => {
+        this.setState(prevState => {
+            return {
+                ...prevState, //level-0-copy // copy all outer keys of state
+                house: {
+                    ...prevState.house, // level-1 copy //copy all state except points
+                    points: prevState.house.points + 1
+                }
+
+            }
+        })
+    }
+    render() {
+        return <div>
+            <h1>House Review App</h1>
+            <h2>{this.state.house.name}</h2>
+            <h2>Points {this.state.house.points}</h2>
+            <button onClick={this.onLike}>Like</button>
+        </div>
+    }
+}
+
+
+function App() {
+    return <>
+        <Review />
+    </>
+}
+export default App;
+
+.....................................................................................
+				Deep Nesting
+.....................................................................................
+
+Assigment:
+    state = {
+        customer: {
+            id: 1,
+            name: 'Subramanian',
+            contact: {
+                address: {
+                    city: 'Chennai'
+                },
+                communcation: {
+                    mobileNo: '9000000'
+                }
+            }
+        }
+    }
+
+How to update mobileNo - 834343434
+
+import { createRoot } from 'react-dom/client'
+import React from 'react'
+import './index.css'
+
+class Customer extends React.Component {
+
+    state = {
+        customer: {
+            id: 1,
+            name: 'Subramanian',
+            contact: {
+                address: {
+                    city: 'Chennai'
+                },
+                communcation: {
+                    mobileNo: '9000000'
+                }
+            }
+        }
+    }
+    onUpdate = () => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                customer: {
+                    ...prevState.customer,
+                    contact: {
+                        ...prevState.customer.contact,
+                        communcation: {
+                            ...prevState.customer.contact.communcation,
+                            mobileNo: '9734232323'
+                        }
+                    }
+                }
+            }
+        })
+    }
+    render() {
+        return <div>
+            <h1>Customer info</h1>
+            <h2>Name : {this.state.customer.name}</h2>
+            <h2>Phone : {this.state.customer.contact.communcation.mobileNo}</h2>
+            <button onClick={this.onUpdate}>UpdateMobileNo</button>
+        </div>
+    }
+}
+
+const App = () => <Customer />
+
+
+createRoot(document.getElementById('root')).render(<App />)
 
 
 
