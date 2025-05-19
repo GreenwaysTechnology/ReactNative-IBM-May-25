@@ -2913,7 +2913,375 @@ export default function App() {
     </>
 }	
 
+............................................................................................................................................................
+		   component Life Cycles and Hooks
+.....................................................................................
 
+render,componentDidMount,componentDidUpdate,componentWillUnMount
+
+useEffect:
+comonentDidMount,componentDidupdate,componentWillUnMount
+    =>useEffect
+
+componentDidMount:
+
+useEffect(()=>{},[]) - useEffect(function,<dependency>)
+useEffect(()=>{})    - useEffect(function)
+
+ComponentDidUpdate
+useEffect(()=>{},[state])
+ here if state is updated, then this hook will be called
+
+
+import React, { StrictMode, useEffect, useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+
+const Timer = () => {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        setTimeout(() => {
+            setCount(count + 1)
+        }, 1000)
+    })
+
+    return <h1>{count} times rendered</h1>
+
+}
+
+const App = () => {
+    return <Timer />
+}
+
+createRoot(document.getElementById('root')).render(
+    <StrictMode>
+        <App />
+    </StrictMode>,
+)
+
+The output it keeps on counting even though it should only count once.
+
+useEffect runs on every render, that means that when the count changes, a render happens, which triggers another effect.
+
+This is not what we want,There are serveral ways to control when side effects run.
+
+We should always include the second parameter which access, an array.
+
+useEffect(()=>{
+   //Runs on every render (re-render)
+})
+
+...................................................................................
+			Runs only First Render
+....................................................................................
+
+useEffect(()=>{
+ //runs only first render
+},[])
+	
+
+import React, { StrictMode, useEffect, useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+
+const Timer = () => {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        setTimeout(() => {
+            setCount(count + 1)
+        }, 1000)
+    }, [])
+
+    return <h1>{count} times rendered</h1>
+
+}
+
+const App = () => {
+    return <Timer />
+}
+
+createRoot(document.getElementById('root')).render(
+    <StrictMode>
+        <App />
+    </StrictMode>,
+)
+....................................................................................
+			call useEffect based on either state or prop
+....................................................................................
+import { useEffect, useState } from "react"
+
+
+const Timer = () => {
+
+    const [count, setCount] = useState(0)
+    const [calculation, setCalculation] = useState(0)
+
+    //call this every re render : componentDidUpdate
+    useEffect(() => {
+        setCalculation(calculation + 2)
+    }, [count])
+
+    return <>
+        <h1>Count : {count}</h1>
+        <button onClick={() => setCount(count + 1)}>+</button>
+        <h1>Calculation : {calculation}</h1>
+    </>
+
+}
+
+
+export default function App() {
+    return <>
+        <Timer />
+    </>
+}
+............................................................................................
+import { useEffect, useState } from "react"
+import { produce } from "immer"
+
+const Products = props => {
+    //state 
+    const initialState = {
+        products: [],
+        isLoading: false, //to show spinner
+        error: null
+    }
+    const [state, setState] = useState(initialState)
+
+    async function getProducts() {
+        try {
+            const url = `https://api.escuelajs.co/api/v1/products`
+            const response = await fetch(url)
+            const products = await response.json()
+            setState(produce(state, (draft) => {
+                draft.products = products
+                draft.isLoading = true
+            }))
+        }
+        catch (err) {
+            setState(produce(state, (draft) => {
+                draft.err = err
+                draft.isLoading = true
+            }))
+        }
+    }
+
+    useEffect(() => {
+        getProducts()
+    }, [])
+
+    //conditional rendering: how to use if...else..elseif
+    if (state.error) {
+        return <div>
+            <h1>Error : {error.message}</h1>
+        </div>
+    } else if (!state.isLoading) {
+        return <h2>Loading...</h2>
+    } else {
+        return <div>
+            <h1>Products</h1>
+            <hr />
+            <div>
+                {
+                    state.products.map(product => {
+                        return <section>
+                            <img src={product.category.image} height={200} width={200} />
+                            <h1>{product.title} </h1>
+                            <p>{product.description}</p>
+                            <h5>{product.price}</h5>
+                        </section>
+                    })
+                }
+            </div>
+        </div>
+    }
+
+}
+
+
+
+
+export default function App() {
+    return <>
+        <Products/>
+    </>
+}
+............................................................................................
+									CURD operation using api calls
+............................................................................................
+
+Project stucture:
+
+ components
+   |
+   UserList
+ UserForm
+
+BackEnd api
+  JSON Placeholder
+
+import { produce } from "immer";
+import { useEffect } from "react";
+import { useState } from "react";
+
+const UserList = ({ users, onEditUser, onDeleteUser }) => {
+
+    return <div>
+        <h2>User List</h2>
+        <ul>
+            {
+                users.map(user => {
+                    return <li key={user.id}>
+                        <span>{user.name} {user.email}</span>
+                        <button onClick={() => {
+                            onEditUser(user)
+                        }} >Edit</button>
+                        <button onClick={() => {
+                            onDeleteUser(user.id)
+                        }}>Delete</button>
+                    </li>
+                })
+            }
+        </ul>
+    </div>
+}
+
+const UserForm = ({ onAddUser, onUpdateUser, editUser }) => {
+    const [formData, setFormData] = useState({ name: '', email: '' })
+
+    useEffect(() => {
+        if (editUser) {
+            setFormData({ name: editUser.name, email: editUser.email })
+        }
+    }, [editUser])
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        if (editUser) {
+            onUpdateUser(editUser.id, formData)
+        } else {
+            onAddUser(formData)
+        }
+        setFormData({ name: '', email: '' })
+    }
+
+    return <form onSubmit={handleSubmit}>
+        <h2>{editUser ? 'Edit User' : 'Add User'}</h2>
+        <div>
+            <label>Name:</label>
+            <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }}
+                required
+            />
+
+        </div>
+        <div>
+            <label>Email:</label>
+            <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => { setFormData({ ...formData, email: e.target.value }) }}
+                required
+            />
+
+        </div>
+        <button type="submit">{editUser ? 'Update' : 'Add'}</button>
+
+    </form>
+
+}
+
+
+function App() {
+
+    const [users, setUsers] = useState([])
+    const [editUser, setEditUser] = useState(null)
+
+    async function fetchUsers() {
+        try {
+            const url = 'http://localhost:3000/users'
+            const response = await fetch(url)
+            const data = await response.json()
+            setUsers(data)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    //add User
+    const addUser = async (user) => {
+        try {
+            const url = 'http://localhost:3000/users'
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user)
+            })
+            const newUser = await response.json()
+            setUsers([...users, newUser])
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    }
+
+    //updateUser 
+    const updateUser = async (id, updateUser) => {
+        try {
+            console.log('')
+            console.log(updateUser)
+            const url = `http://localhost:3000/users/${id}`
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateUser)
+            })
+            const updatedData = await response.json()
+            setUsers(users.map(user => (user.id === id ? updatedData : user)))
+            setEditUser(null)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    //delete user;
+    const deleteUser = async (id) => {
+        try {
+            const url = `http://localhost:3000/users/${id}`
+            const response = await fetch(url, {
+                method: 'DELETE'
+            })
+            setUsers(users.filter(user => (user.id !== id)))
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+
+    useEffect(() => {
+        fetchUsers()
+    }, [])
+
+    return <>
+        <h1>Users REST API CURD APP</h1>
+        <UserForm onAddUser={addUser} onUpdateUser={updateUser} editUser={editUser} />
+        <UserList users={users} onEditUser={setEditUser} onDeleteUser={deleteUser} />
+    </>
+
+}
+
+export default App;
+
+Setup Localserver:
+https://github.com/typicode/json-server
 
 
 
