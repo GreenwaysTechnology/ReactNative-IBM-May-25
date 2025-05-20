@@ -1,97 +1,122 @@
-import { StrictMode } from 'react'
+import { createSlice } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+import { useState } from 'react';
+import { useSelector, useDispatch, Provider } from 'react-redux';
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { configureStore } from '@reduxjs/toolkit'
-import { Provider, useDispatch, useSelector } from 'react-redux'
-import { produce } from 'immer'
 
-//action constant
-const counterIncrement = 'counter/increment'
-const bankDeposit = 'bank/deposit'
+const initialState = {
+    items: [
+        { id: 1, name: 'Item 1' },
+        { id: 2, name: 'Item 2' },
+    ],
+};
 
-const CounterReducer = (count = { value: 100 }, action) => {
-    switch (action.type) {
-        case counterIncrement:
-            return produce(count, (draft) => {
-                draft.value += 1
-            })
-        default:
-            return count
-    }
-}
-const BankReducer = (amount = { value: 0 }, action) => {
-    switch (action.type) {
-        case bankDeposit:
-            return produce(amount, (draft) => {
-                draft.value += action.payload
-            })
-        default:
-            return amount
-    }
-}
-const store = configureStore({
+const itemsSlice = createSlice({
+    name: 'items',
+    initialState,
+    reducers: {
+        addItem: (state, action) => {
+            const newItem = {
+                id: state.items.length > 0 ? state.items[state.items.length - 1].id + 1 : 1,
+                name: action.payload,
+            };
+            //immutable api
+            state.items.push(newItem);
+        },
+        updateItem: (state, action) => {
+            const { id, name } = action.payload;
+            const item = state.items.find((item) => item.id === id);
+            if (item) {
+                item.name = name;
+            }
+        },
+        deleteItem: (state, action) => {
+            state.items = state.items.filter((item) => item.id !== action.payload);
+        },
+    },
+});
+export const { addItem, updateItem, deleteItem } = itemsSlice.actions;
+export const itemsReducer = itemsSlice.reducer;
+
+export const store = configureStore({
     reducer: {
-        //NameofReducer:Redurcer Reference
-        counter: CounterReducer,
-        bank: BankReducer
-    }
-})
+        myItems: itemsReducer,
+    },
+});
 
-const Counter = (props) => {
-    const count = useSelector(appState => {
-        return appState.counter
-    })
-    const dispatch = useDispatch()
-    return <div>
-        <h1>Count : {count.value}</h1>
-        <button onClick={() => {
-            dispatch({ type: counterIncrement })
-        }}>+</button>
-    </div>
-}
-const Bank = (props) => {
-    const amount = useSelector(appState => {
-        return appState.bank
-    })
-    const dispatch = useDispatch()
+const Items = () => {
+    const items = useSelector((state) => state.myItems.items);
+    const dispatch = useDispatch();
 
-    //actionCreator
-    // function depositActionCreator(payload) {
-    //     return {
-    //         type: bankDeposit,
-    //         payload: payload
-    //     }
-    // }
-    // const depositActionCreator = (payload) => {
-    //     return {
-    //         type: bankDeposit,
-    //         payload: payload
-    //     }
-    // }
-    const depositActionCreator = payload => ({
-        type: bankDeposit,
-        payload
-    })
+    const [newItem, setNewItem] = useState('');
+    const [editingItem, setEditingItem] = useState(null);
+    const [editingName, setEditingName] = useState('');
 
-    return <div>
-        <h1>Amount  : {amount.value}</h1>
-        <button onClick={() => {
-            // dispatch({ type: bankDeposit, payload: 1000 })
-            dispatch(depositActionCreator(1000))
-        }}>Deposit</button>
-    </div>
+    const handleAdd = () => {
+        if (newItem.trim()) {
+            dispatch(addItem(newItem));
+            setNewItem('');
+        }
+    };
+    const handleUpdate = (id) => {
+        if (editingName.trim()) {
+            dispatch(updateItem({ id, name: editingName }));
+            setEditingItem(null);
+            setEditingName('');
+        }
+    };
+    return (
+        <div style={{ padding: '20px' }}>
+            <h1>CRUD with Redux Toolkit</h1>
+            <div>
+                <input
+                    type="text"
+                    placeholder="Add new item"
+                    value={newItem}
+                    onChange={(e) => setNewItem(e.target.value)}
+                />
+                <button onClick={handleAdd}>Add</button>
+            </div>
+            <ul>
+                {items.map((item) => (
+                    <li key={item.id}>
+                        {editingItem === item.id ? (
+                            <>
+                                <input
+                                    type="text"
+                                    value={editingName}
+                                    onChange={(e) => setEditingName(e.target.value)}
+                                />
+                                <button onClick={() => handleUpdate(item.id)}>Save</button>
+                                <button onClick={() => setEditingItem(null)}>Cancel</button>
+                            </>
+                        ) : (
+                            <>
+                                {item.name}{' '}
+                                <button onClick={() => {
+                                    setEditingItem(item.id);
+                                    setEditingName(item.name);
+                                }}>
+                                    Edit
+                                </button>{' '}
+                                <button onClick={() => dispatch(deleteItem(item.id))}>Delete</button>
+                            </>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+
+
 }
 
 const App = () => {
     return <Provider store={store}>
-        <Counter />
-        <hr />
-        <Bank />
+        <Items />
     </Provider>
 }
-
 createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <App />
-    </StrictMode>,
+    <App />
 )
