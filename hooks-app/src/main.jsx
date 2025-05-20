@@ -2,10 +2,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { useEffect, useState } from 'react'
 
-const url = `https://jsonplaceholder.typicode.com/users`
+// const url = `https://jsonplaceholder.typicode.com/users`
+const url = `http://localhost:3000/users`
 
-
-const UserList = ({ users, onEditUser }) => {
+const UserList = ({ users, onEditUser, onDeleteUser }) => {
     return <div>
         <h2>User List</h2>
         <ul>
@@ -16,7 +16,10 @@ const UserList = ({ users, onEditUser }) => {
                         <button onClick={() => {
                             onEditUser(user)
                         }} >Edit</button>
-                        <button>Delete</button>
+                        <button onClick={() => {
+                            onDeleteUser(user.id)
+                        }}>Delete</button>
+
                     </li>
                 })
             }
@@ -120,10 +123,23 @@ const Users = props => {
             console.log(err)
         }
     }
+    //delete user;
+    const deleteUser = async (id) => {
+        try {
+            // const url = `http://localhost:3000/users/${id}`
+            const response = await fetch(`${url}/${id}`, {
+                method: 'DELETE'
+            })
+            setUsers(users.filter(user => (user.id !== id)))
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
 
     return <>
         <UserForm onAddUser={addUser} onUpdateUser={updateUser} editUser={editUser} />
-        <UserList users={users} onEditUser={setEditUser} />
+        <UserList users={users} onEditUser={setEditUser} onDeleteUser={deleteUser} />
     </>
 
 }
