@@ -1,0 +1,102 @@
+import { ScrollView, Text,  } from "react-native"
+import { styles } from "./styles/app.style"
+
+//root Component
+function App() {
+    return <ScrollView style={styles.container}>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+        <Text style={styles.label}>Hello React Native</Text>
+    </ScrollView>
+}
+
+export default App
