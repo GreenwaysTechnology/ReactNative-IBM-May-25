@@ -2916,3 +2916,214 @@ const styles = StyleSheet.create({
         color: '#000'
     }
 })
+
+.......................................................................................................
+							Device  specific features
+.......................................................................................................
+React Native core does not have any component or api to talk with device features
+
+such as location,camera,network etc...
+
+We have to go with third party libs
+
+1.https://reactnative.directory/
+
+2.Expo Framework.
+
+Expo framwork offers most of the device specific components and apis.
+
+if you want to use expo components inside react native cli based projects are not stright forward.
+we need to lot of configuration.
+
+..............................................................................................
+			  Location and google Map integration
+..............................................................................................
+
+How to get gps location and show that in map?
+
+Steps:
+
+1.google map integration
+
+npm i react-native-maps
+npm i @react-native-community/geolocation
+
+2.Get Google map key
+Obtain a Google Maps API Key
+API Key
+AIzaSyCRE1CZ8UX6sWHqU9gpe3vOd4KNpCT7lb8
+
+3.Add android dependencies
+
+android/app/build.gradle
+
+dependencies {
+
+   implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
+}
+
+4.AndroidManifest.xml
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+<application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme"
+      android:supportsRtl="true">
+
+      <meta-data
+      android:name="com.google.android.geo.API_KEY"
+      android:value="AIzaSyCRE1CZ8UX6sWHqU9gpe3vOd4KNpCT7lb8" />
+ 
+</application>
+
+5.Set lat and lng in emulator
+......
+6.code 
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, PermissionsAndroid, Platform } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
+import Geolocation from '@react-native-community/geolocation';
+
+function App() {
+    const [location, setLocation] = useState(null);
+
+    useEffect(() => {
+        if (Platform.OS === 'android') {
+            requestLocationPermission();
+        }
+        getCurrentLocation();
+    }, []);
+    // Function to get current location
+    const getCurrentLocation = () => {
+        Geolocation.getCurrentPosition((position) => {
+            setLocation(position.coords);
+        },
+            (error) => console.log(error),
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+    };
+    // Request location permission for Android
+    const requestLocationPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: 'Location Permission',
+                    message: 'We need access to your location to show it on the map.',
+                    buttonNeutral: 'Ask Me Later',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('Location permission granted');
+            } else {
+                console.log('Location permission denied');
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+    return (
+        <View style={{ flex: 1 }}>
+            {location ? (
+                <MapView
+                    style={{ flex: 1 }}
+                    region={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                >
+                    <Marker coordinate={location} title="Your Location" />
+                </MapView>
+            ) : (
+                <Text>Fetching location...</Text>
+            )}
+
+            <Button title="Get Location" onPress={getCurrentLocation} />
+        </View>
+    );
+}
+
+export default App;
+.......................................................................................................
+Camera:
+  Integrating the camera in React Native involves using libraries like react-native-vision-camera or react-native-camera. Here's a step-by-step guide to set up and test the camera in your React Native app, including how to handle testing on a simulator.
+
+1. Install the Camera Library
+The recommended library is react-native-vision-camera, as it is modern, well-maintained, and provides better performance.
+https://react-native-vision-camera.com/docs/guides
+
+npm i react-native-vision-camera
+
+
+2.AndroidManifest.xml
+<uses-permission android:name="android.permission.CAMERA" />
+
+
+
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Text, Button, Alert } from 'react-native';
+import { Camera, useCameraDevice } from 'react-native-vision-camera';
+
+const App = () => {
+    const device = useCameraDevice('back')
+
+    useEffect(() => {
+        console.log('Available devices:', device);
+    }, [device]);
+
+    useEffect(() => {
+        const requestPermission = async () => {
+            const cameraPermission = await Camera.requestCameraPermission();
+            const microphonePermission = await Camera.requestMicrophonePermission();
+
+            if (cameraPermission !== 'authorized' || microphonePermission !== 'authorized') {
+                Alert.alert('Permission denied', 'Camera or Microphone permission is required.');
+            }
+        };
+
+        requestPermission();
+    }, []);
+
+    if (device == null) {
+        return <Text>Loading camera...</Text>;
+    }
+
+    return (
+        <View style={styles.container}>
+            <Camera
+                style={StyleSheet.absoluteFill}
+                device={device}
+                isActive={true}
+            />
+            <View style={styles.buttonContainer}>
+                <Button title="Capture" onPress={() => Alert.alert('Feature not implemented')} />
+            </View>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: { flex: 1 },
+    buttonContainer: {
+        position: 'absolute',
+        bottom: 20,
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 10,
+    },
+});
+
+export default App;
+
+........................................................................................................
